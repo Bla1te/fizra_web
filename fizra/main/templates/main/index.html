@@ -15,7 +15,9 @@
 
 class Calendar {
     constructor() {
-        this.currentDate = new Date(2025, 10, 1);
+        let today = new Date();
+        today.setHours(0, 0, 0, 0);
+        this.currentDate = today;
         this.init();
         this.bindEvents();
     }

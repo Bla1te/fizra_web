@@ -1,0 +1,67 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{% endblock title %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    {% block style %}{% endblock style %}
+    <link rel="stylesheet" href=" {% static "styles.css" %} ">
+</head>
+<body>
+    <!-- Верхняя панель навигации -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container custom-container">
+            <!-- Кнопка меню с выпадающим списком -->
+            <div class="dropdown">
+                <button class="btn btn-dark dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-dark">
+                    <li><a class="dropdown-item" href="#">Пункт 1</a></li>
+                    <li><a class="dropdown-item" href="#">Пункт 2</a></li>
+                    <li><a class="dropdown-item" href="#">Пункт 3</a></li>
+                </ul>
+            </div>
+
+            <!-- Кнопка Войти справа -->
+            <div class="ms-auto">
+                {% if user.is_authenticated %}
+                    <span class="text-light me-3">{{ user.username }}</span>
+                    <button class="btn btn-outline-light" id="logoutBtn">Выйти</button>
+                {% else %}
+                    <button class="btn btn-outline-light" id="loginBtn">{% if index %}Войти{% endif %}{% if not index %}Главная{% endif %}</button>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+ 
+    <!-- Основной контент -->
+    <div class="container custom-container main-content">
+        <div class="row">
+            {% block content %}
+            {% endblock content %}
+
+            
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static "script.js"%}"></script>
+    {% block scripts %}{% endblock scripts %}
+    <script>
+        {% if user.is_authenticated %}
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            window.location.replace({% url "logout" %});
+            console.log('logout')
+        });
+        {%endif%}
+        console.log('here')
+        {% block script %}
+    {% endblock script %}
+    </script>
+    
+</body>
+</html>

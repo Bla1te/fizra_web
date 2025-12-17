@@ -1,0 +1,15 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Django with Venv",
+            "type": "debugpy",
+            "request": "launch",
+            "python": "/Users/dana/projects/fizra_web/venv/bin/python3",
+            "program": "/Users/dana/projects/fizra_web/fizra/manage.py",
+            "args": ["runserver", "8000"],
+            "django": true,
+            "console": "integratedTerminal"
+        }
+    ]
+}

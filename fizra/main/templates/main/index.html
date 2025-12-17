@@ -1,0 +1,165 @@
+{% extends 'main/base.html' %}
+
+{% block title %}
+  Физ-пос
+{% endblock %}
+
+{% block script %}
+{% if not user.is_authenticated %}
+    document.getElementById('loginBtn').addEventListener('click', () => { 
+        window.location.replace({% url 'login' %}); 
+    }); 
+
+
+  {% endif %}
+
+class Calendar {
+    constructor() {
+        this.currentDate = new Date(2025, 10, 1);
+        this.init();
+        this.bindEvents();
+    }
+
+    init() {
+        this.renderCalendar();
+    }
+
+    bindEvents() {
+        document.getElementById('prevMonth').addEventListener('click', () => {
+            this.changeMonth(-1);
+        });
+
+        document.getElementById('nextMonth').addEventListener('click', () => {
+            this.changeMonth(1);
+        });
+
+    }
+
+    changeMonth(direction) {
+        this.currentDate.setMonth(this.currentDate.getMonth() + direction);
+        this.renderCalendar();
+    }
+
+    renderCalendar() {
+        const calendarElement = document.getElementById('calendar');
+        const monthYearElement = document.getElementById('currentMonth');
+
+        // Обновляем заголовок
+        const monthNames = [
+            'Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
+            'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'
+        ];
+
+        const currentMonth = this.currentDate.getMonth();
+        const currentYear = this.currentDate.getFullYear();
+
+        monthYearElement.textContent = `${monthNames[currentMonth]} ${currentYear}`;
+
+        // Очищаем календарь
+        calendarElement.innerHTML = '';
+
+        // Добавляем заголовки дней недели
+        const weekdays = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
+        weekdays.forEach(day => {
+            const dayElement = document.createElement('div');
+            dayElement.className = 'calendar-day weekday';
+            dayElement.textContent = day;
+            calendarElement.appendChild(dayElement);
+        });
+
+        // Получаем первый день месяца и количество дней
+        const firstDay = new Date(currentYear, currentMonth, 1);
+        const lastDay = new Date(currentYear, currentMonth + 1, 0);
+        const daysInMonth = lastDay.getDate();
+
+        // Определяем день недели первого дня (1 - понедельник, 0 - воскресенье)
+        let firstDayOfWeek = firstDay.getDay();
+        if (firstDayOfWeek === 0) firstDayOfWeek = 7; // Воскресенье становится 7
+
+        // Добавляем пустые ячейки для дней предыдущего месяца
+        for (let i = 1; i < firstDayOfWeek; i++) {
+            const emptyDay = document.createElement('div');
+            emptyDay.className = 'calendar-day other-month';
+            calendarElement.appendChild(emptyDay);
+        }
+
+        // Добавляем дни текущего месяца
+        const today = new Date();
+        for (let day = 1; day <= daysInMonth; day++) {
+            const dayElement = document.createElement('div');
+            dayElement.className = 'calendar-day';
+            dayElement.textContent = day;
+            const zlen = 1;
+            const str = ('00'+day.toString()).slice(-2)+"-"+('00'+(currentMonth+1).toString()).slice(-2);
+            
+            {% for i in attendance %}if (str === "{{ i.date }}"){
+              dayElement.classList.add('{{i.status}}');
+            }{% endfor %}
+            
+            // Проверяем является ли день выходным
+            const dayOfWeek = new Date(currentYear, currentMonth, day).getDay();
+            if (dayOfWeek === 0 || dayOfWeek === 6) {
+                dayElement.classList.add('weekend');
+            }
+
+            
+
+            // Проверяем является ли день сегодняшним
+            if (day === today.getDate() &&
+                currentMonth === today.getMonth() &&
+                currentYear === today.getFullYear()) {
+                dayElement.classList.add('today');
+            }
+
+            calendarElement.appendChild(dayElement);
+        }
+    }
+}
+
+// Инициализация календаря при загрузке страницы
+document.addEventListener('DOMContentLoaded', () => {
+    new Calendar();
+});
+  
+
+
+{% endblock script%}
+
+{% block content %}
+  <!-- Календарь -->
+  <div class="col-md-8">
+    <div class="calendar-container">
+      <div class="calendar-header d-flex justify-content-between align-items-center mb-3">
+        <h3 id="currentMonth">Ноябрь 2025</h3>
+        <div class="calendar-nav">
+          <button class="btn btn-outline-secondary btn-sm" id="prevMonth">←</button>
+          <button class="btn btn-outline-secondary btn-sm" id="nextMonth">→</button>
+        </div>
+      </div>
+
+      <div class="calendar" id="calendar">
+        <!-- Календарь будет сгенерирован через JavaScript -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Информация справа -->
+  <div class="col-md-4">
+    <div class="info-sidebar">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Этот семестор</h5>
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item"> {{context.skips}} пропуска</li>
+            <li class="list-group-item">{{context.visits}} посещений</li>
+            <li class="list-group-item"></li>
+          </ul>
+          <p class="card-text">В сумме {{context.summ}} балл. 
+            {% if context.summ > 59 %}Поздравляем можете больше не ходить на физкультуру!{% endif %}
+            
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

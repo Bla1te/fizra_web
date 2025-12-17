@@ -1,0 +1,42 @@
+{% extends 'main/base.html' %}
+{% load static %}
+{% block title %}
+  Вход
+{% endblock %}
+
+{% block style %}
+  <link rel="stylesheet" href=" {% static 'login-styles.css' %} " />
+{% endblock %}
+
+{% block content %}
+  {% if error %}
+    <div class="login-form" class="padding: 25px 30px; background: #ffd5d5;">
+      <h4 style="    text-align: center;    font-size: 1rem;">Пользователь не найден</h4>
+    </div>
+  {% endif %}
+  <div class="login-form">
+    <!-- Заголовок ВХОД по центру -->
+    <h1 class="login-title">ВХОД</h1>
+
+    <!-- Форма входа -->
+    <form id="loginForm" method="POST">
+      {% csrf_token %}
+      <div class="mb-3">
+        <label for="username" class="form-label">Логин</label>
+        <input type="text" class="form-control" id="username" name="username" required />
+      </div>
+
+      <!-- Кнопка Войти -->
+      <button type="submit" class="btn btn-primary w-100">Войти</button>
+    </form>
+  </div>
+{% endblock %}
+
+{% block script %}
+  
+    document.getElementById('loginBtn').addEventListener('click', () => {
+      window.location.replace('../')
+    })
+    console.log('hahahahhahah')
+
+{% endblock %}

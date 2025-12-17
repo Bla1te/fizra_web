@@ -148,13 +148,13 @@ document.addEventListener('DOMContentLoaded', () => {
     <div class="info-sidebar">
       <div class="card">
         <div class="card-body">
-          <h5 class="card-title">Этот семестор</h5>
+          <h5 class="card-title">Этот семестр</h5>
           <ul class="list-group list-group-flush">
             <li class="list-group-item"> {{context.skips}} пропуска</li>
             <li class="list-group-item">{{context.visits}} посещений</li>
             <li class="list-group-item"></li>
           </ul>
-          <p class="card-text">В сумме {{context.summ}} балл. 
+          <p class="card-text">В сумме {{context.summ}} баллов. 
             {% if context.summ > 59 %}Поздравляем можете больше не ходить на физкультуру!{% endif %}
             
           </p>
